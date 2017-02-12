@@ -65,49 +65,51 @@ namespace gr {
         {
             return;
         }
+        
+        std::ostringstream out_msg = std::ostringstream(pmt::symbol_to_string(d_prepend_string));
 
-        std::cout << d_prepend_string;
         if (d_prepend_fnr)
         {
-            std::cout << frame_nr;
+            out_msg << std::to_string(frame_nr);
         }
 
         if (d_prepend_fnr && d_prepend_frame_count)
         {
-            std::cout << " ";
+            out_msg << " ";
         }
 
         if (d_prepend_frame_count)
         {
             // calculate fn count using libosmogsm
-            std::cout << osmo_a5_fn_count(frame_nr);
+            out_msg << std::to_string(osmo_a5_fn_count(frame_nr));
         }
 
         if (d_prepend_fnr || d_prepend_frame_count)
         {
-            std::cout << ": ";
+            out_msg << ": ";
         }
 
         if (d_print_payload_only)
         {
             for (int ii=0; ii<57; ii++)
             {
-                std::cout << std::setprecision(1) << static_cast<int>(burst[ii + 3]);
+                out_msg << std::to_string(burst[ii + 3]);
             }
             for (int ii=0; ii<57; ii++)
             {
-                std::cout << std::setprecision(1) << static_cast<int>(burst[ii + 88]);
+                out_msg << std::to_string(burst[ii + 88]);
+                // out_msg += std::setprecision(1) + static_cast<int>(burst[ii + 88]);
             }
         }
         else
         {
             for(int ii=0; ii<burst_len; ii++)
             {
-              std::cout << std::setprecision(1) << static_cast<int>(burst[ii]);
+              out_msg << std::to_string(burst[ii]);
             }
         }
 
-        std::cout << std::endl;
+        message_port_pub(pmt::mp("strings"), pmt::string_to_symbol(out_msg.str()));
     }
 
     bool bursts_printer_impl::is_dummy_burst(int8_t *burst, size_t burst_len)
@@ -154,6 +156,7 @@ namespace gr {
 
         message_port_register_in(pmt::mp("bursts"));
         set_msg_handler(pmt::mp("bursts"), boost::bind(&bursts_printer_impl::bursts_print, this, _1));
+        message_port_register_out(pmt::mp("strings"));
     }
 
     /*

@@ -40,6 +40,7 @@
 #include "grgsm/misc_utils/message_file_source.h"
 #include "grgsm/misc_utils/msg_to_tag.h"
 #include "grgsm/misc_utils/controlled_fractional_resampler_cc.h"
+#include "grgsm/misc_utils/final_printer.h"
 %}
 
 %include "grgsm/receiver/receiver.h"
@@ -104,6 +105,8 @@ GR_SWIG_BLOCK_MAGIC2(gsm, msg_to_tag);
 GR_SWIG_BLOCK_MAGIC2(gsm, controlled_fractional_resampler_cc);
 %include "grgsm/misc_utils/extract_cmc.h"
 GR_SWIG_BLOCK_MAGIC2(gsm, extract_cmc);
+%include "grgsm/misc_utils/final_printer.h"
+GR_SWIG_BLOCK_MAGIC2(grgsm, final_printer);
 
 
 %include "grgsm/qa_utils/burst_sink.h"

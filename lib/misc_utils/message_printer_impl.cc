@@ -46,26 +46,27 @@ namespace gr {
         gsmtap_hdr * header = (gsmtap_hdr *)message_plus_header;
         uint32_t frame_nr = be32toh(header->frame_number);
         
-        std::cout << d_prepend_string;
+        std::ostringstream out_msg = std::ostringstream(pmt::symbol_to_string(d_prepend_string));
+        
         if (d_prepend_fnr)
         {
-            std::cout << frame_nr;
+            out_msg << std::to_string(frame_nr);
         }
 
         if (d_prepend_fnr && d_prepend_frame_count)
         {
-            std::cout << " ";
+            out_msg << " ";
         }
 
         if (d_prepend_frame_count)
         {
             // calculate fn count using libosmogsm
-            std::cout << osmo_a5_fn_count(frame_nr);
+            out_msg << std::to_string(osmo_a5_fn_count(frame_nr));
         }
 
         if (d_prepend_fnr || d_prepend_frame_count)
         {
-            std::cout << ": ";
+            out_msg << ": ";
         }
         
         int start_index = sizeof(gsmtap_hdr);
@@ -77,9 +78,11 @@ namespace gr {
         
         for(int ii=start_index; ii<message_plus_header_len; ii++)
         {
-            printf(" %02x", message_plus_header[ii]);
+            out_msg << " " << std::hex << std::setfill('0') << std::setw(2) << static_cast<int>(message_plus_header[ii]);
+//            out_msg << printf(" %02x", message_plus_header[ii]);
         }
-        std::cout << std::endl;
+        
+        message_port_pub(pmt::mp("strings"), pmt::string_to_symbol(out_msg.str()));
     }
 
     message_printer::sptr
@@ -106,6 +109,7 @@ namespace gr {
         d_print_gsmtap_header = print_gsmtap_header;
         message_port_register_in(pmt::mp("msgs"));
         set_msg_handler(pmt::mp("msgs"), boost::bind(&message_printer_impl::message_print, this, _1));
+        message_port_register_out(pmt::mp("strings"));
     }
 
     /*

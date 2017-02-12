@@ -118,6 +118,11 @@ class grgsm_decoder(gr.top_block):
         if self.print_bursts:
             self.bursts_printer = grgsm.bursts_printer(pmt.intern(""), True, True, True, True)
 
+        self.final_printer = grgsm.final_printer()
+
+        self.msg_connect(self.bursts_printer, "strings", self.final_printer, "print")
+        self.msg_connect(self.message_printer, "strings", self.final_printer, "print")
+
 
 
         ##################################################
@@ -209,6 +214,8 @@ class grgsm_decoder(gr.top_block):
             if self.verbose:
                 self.msg_connect(self.tch_f_decoder, "msgs", self.message_printer, "msgs")
                 self.msg_connect(self.cch_decoder, "msgs", self.message_printer, "msgs")
+            
+            
             
 
 if __name__ == '__main__':

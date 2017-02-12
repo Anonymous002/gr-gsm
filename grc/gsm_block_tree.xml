@@ -65,6 +65,7 @@
       <block>gsm_clock_offset_corrector_tagged</block>
       <block>gsm_msg_to_tag.xml</block>
       <block>gsm_tmsi_dumper</block>
+      <block>grgsm_final_printer</block>
     </cat>
   </cat>
 </cat>
